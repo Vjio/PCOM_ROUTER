@@ -1,0 +1,9 @@
+*.o
+*_err
+*_out
+router
+router0
+router1
+routerOutput
+routerOutputARP
+/hosts_output/*
