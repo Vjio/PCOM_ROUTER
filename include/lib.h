@@ -63,13 +63,6 @@ struct arp_table_entry *get_arp_table_entry(uint32_t given_ip,
 	struct arp_table_entry *arp_table, int arp_table_len);
 
 /**
- * @brief Homework infrastructure function.
- *
- * @param argc
- * @param argv
- */
-
-/**
  * @brief IPv4 checksum per  RFC 791. To compute the checksum
  * of an IP header we must set the checksum to 0 beforehand.
  *

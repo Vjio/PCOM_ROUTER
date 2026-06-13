@@ -245,3 +245,14 @@ int parse_arp_table(char *path, struct arp_table_entry *arp_table)
 	fprintf(stderr, "Done parsing ARP table.\n");
 	return i;
 }
+
+struct arp_table_entry *get_arp_table_entry(uint32_t given_ip, 
+	struct arp_table_entry *arp_table, int arp_table_len) {
+	struct arp_table_entry *arp_entry = NULL;
+
+	for (int i = 0; i < arp_table_len; i++)
+		if (given_ip == arp_table[i].ip)
+			arp_entry = &arp_table[i];
+
+	return arp_entry;
+}

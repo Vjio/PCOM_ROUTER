@@ -2,7 +2,7 @@
 
 #include <arpa/inet.h>
 #include <string.h>
-#include "protocols.h"
+#include "misc_protocol.h"
 #include "lib.h"
 
 struct route_table_entry *get_best_route(uint32_t ip_dest, struct route_table_entry *routing_table, int routing_table_len);

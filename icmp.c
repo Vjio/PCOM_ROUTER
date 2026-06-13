@@ -1,4 +1,4 @@
-#include <icmp.h>
+#include "icmp.h"
 
 // the router will need to handle icmp header in only 3 instances
 // replying to an echo
@@ -23,7 +23,6 @@ void handle_icmp(struct ether_hdr* ether_header, struct ip_hdr *ip_header, struc
         len = sizeof(struct ether_hdr) + 2 * sizeof(struct ip_hdr) + sizeof(struct icmp_hdr) + 8;
     }
     // for the echo reply, we keep the payload intact
-
 
     // update ETHER header
     memcpy(ether_header->ethr_dhost, ether_header->ethr_shost, 6);

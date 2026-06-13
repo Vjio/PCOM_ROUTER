@@ -1,10 +1,9 @@
-#include "protocols.h"
+#include "misc_protocol.h"
 #include "queue.h"
 #include "routing_table.h"
 #include "lib.h"
 #include "arp.h"
 #include "ipv4.h"
-
 
 int main(int argc, char *argv[])
 {
@@ -14,7 +13,7 @@ int main(int argc, char *argv[])
 	init(argv + 2, argc - 2);
 
 	FILE *file = fopen("routerOutput", "w");
-	fprintf(file, "I'M ALIVE\n");
+	fprintf(file, "Router starting\n");
 	fflush(file);
 
 	// allocate ARP & routing tables
@@ -45,9 +44,8 @@ int main(int argc, char *argv[])
 		// read failed, try again
 		if (interface == -1)
 			continue;
-		
 
-		fprintf(file, "GOT MAIL\n");
+		fprintf(file, "Received packet\n");
 		fflush(file);
 
 		// check if the message received is large enough

@@ -1,6 +1,3 @@
-#ifndef QUEUE_H
-#define QUEUE_H
-
 #pragma once
 
 #include "list.h"
@@ -23,5 +20,3 @@ extern void *queue_deq(queue q);
 
 /* return a true value if and only if the queue is empty */
 extern int queue_empty(queue q);
-
-#endif
