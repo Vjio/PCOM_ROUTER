@@ -4,6 +4,7 @@
 #include "lib.h"
 #include "arp.h"
 #include "ipv4.h"
+#include "ipv6.h"
 
 int main(int argc, char *argv[])
 {
@@ -27,7 +28,7 @@ int main(int argc, char *argv[])
 	sort_routing_table(routing_table, routing_table_len);
 
 	// allocate arp queue
-	struct queue *q = create_queue();
+	struct queue *arp_q = create_queue();
 
 	while (1) {
 
@@ -77,21 +78,31 @@ int main(int argc, char *argv[])
 
 ethernet_header_correct:
 
-		// check ethernet_header for either IPv4 or ARP
-		if (ntohs(ether_header->ethr_type) == ETHR_TYPE_IPV4) {
+		// call function depending on next header after ethernet 
+		uint16_t ethr_type = ntohs(ether_header->ethr_type);
+		switch (ethr_type) {
+		case ETHR_TYPE_IPV4:
 			struct ip_hdr *ip_header = (struct ip_hdr*) (buf + sizeof(struct ether_hdr));
 			handle_ipv4(ether_header, ip_header, buf, len, interface, arp_table, arp_table_len,
-				routing_table, routing_table_len, q);
-		} else if (ntohs(ether_header->ethr_type) == ETHR_TYPE_ARP) {
+				routing_table, routing_table_len, arp_q);
+			break;
+		
+		case ETHER_TYPE_IPV6:
+			struct ipv6_hdr *ipv6_header = (struct ipv6_hdr*) (buf + sizeof(struct ether_hdr));
+			handle_ipv6(ether_header, ipv6_header, buf, len, interface);
+			break;
+
+		case ETHR_TYPE_ARP:
 			struct arp_hdr *arp_header = (struct arp_hdr*) (buf + sizeof(struct ether_hdr));
 			handle_arp(ether_header, arp_header, buf, len, interface, arp_table, &arp_table_len, 
-				routing_table, routing_table_len, q);
-		} else {
+				routing_table, routing_table_len, arp_q);
+			
+		default:
 			// packet uses a different network protocol, not included in this project
 			// drop ze packet
 			fprintf(file, "unrecognized protocol, packet dropped\n");
 			fflush(file);
-			continue;
+			break;
 		}
 	}
 
@@ -99,7 +110,7 @@ ethernet_header_correct:
 	fclose(file);
 	free(routing_table);
 	free(arp_table);
-	while (!queue_empty(q)) 
-		queue_deq(q);
-	free(q);
+	while (!queue_empty(arp_q)) 
+		queue_deq(arp_q);
+	free(arp_q);
 }

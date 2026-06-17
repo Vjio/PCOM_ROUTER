@@ -15,6 +15,7 @@
 #include <asm/byteorder.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <ifaddrs.h>
 
 
 int interfaces[ROUTER_NUM_INTERFACES];
@@ -98,7 +99,7 @@ size_t recv_from_any_link(char *frame_data, size_t *length) {
 	return -1;
 }
 
-char *get_interface_ip(int interface)
+char *get_interface_ipv4(int interface)
 {
 	struct ifreq ifr;
 	int ret;
@@ -107,9 +108,38 @@ char *get_interface_ip(int interface)
 	else {
 		sprintf(ifr.ifr_name, "r-%u", interface - 1);
 	}
+	// get addr for this interface
 	ret = ioctl(interfaces[interface], SIOCGIFADDR, &ifr);
 	DIE(ret == -1, "ioctl SIOCGIFADDR");
 	return inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
+}
+
+const char *get_interface_ipv6(int interface) {
+    char iface_name[IF_NAMESIZE];
+    if (interface == 0)
+        snprintf(iface_name, sizeof(iface_name), "rr-0-1");
+    else
+        snprintf(iface_name, sizeof(iface_name), "r-%u", interface - 1);
+
+    struct ifaddrs *ifaddr, *ifa;
+    static char addr_str[INET6_ADDRSTRLEN];
+
+    if (getifaddrs(&ifaddr) == -1)
+        return NULL;
+
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == NULL) continue;
+        if (ifa->ifa_addr->sa_family != AF_INET6) continue;
+        if (strcmp(ifa->ifa_name, iface_name) != 0) continue;
+
+        struct sockaddr_in6 *s6 = (struct sockaddr_in6 *)ifa->ifa_addr;
+        inet_ntop(AF_INET6, &s6->sin6_addr, addr_str, sizeof(addr_str));
+        freeifaddrs(ifaddr);
+        return addr_str;
+    }
+
+    freeifaddrs(ifaddr);
+    return NULL;
 }
 
 void get_interface_mac(size_t interface, uint8_t *mac)

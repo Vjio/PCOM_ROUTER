@@ -22,6 +22,7 @@ struct ip_hdr {
     uint32_t   dest_addr;   // dest ip addr
 };
 
+// function responsible for handling ipv4 packets
 void handle_ipv4(struct ether_hdr* ether_header, struct ip_hdr *ip_header, 
 	char buf[MAX_PACKET_LEN], size_t len, size_t interface, 
 	struct arp_table_entry *arp_table, int arp_table_len,

@@ -10,7 +10,7 @@ void handle_arp(struct ether_hdr *ether_header, struct arp_hdr *arp_header,
     // check if this is an arp request
     if (ntohs(arp_header->opcode) == ARP_REQUEST) {
         // see if the router's ip is the one it is looking for
-        if (arp_header->tprotoa == inet_addr(get_interface_ip(interface))) {
+        if (arp_header->tprotoa == inet_addr(get_interface_ipv4(interface))) {
             fprintf(file, "REPLYING TO ARP REQUEST\n");
             fflush(file);
             // reply to request with router's mac
@@ -39,7 +39,7 @@ void handle_arp(struct ether_hdr *ether_header, struct arp_hdr *arp_header,
         }
     } else if (ntohs(arp_header->opcode) == ARP_REPLY) {
         // check if ARP repply is for this router
-        if (arp_header->tprotoa == inet_addr(get_interface_ip(interface))) {
+        if (arp_header->tprotoa == inet_addr(get_interface_ipv4(interface))) {
             // good, now the router knows the sender's MAC
             // cache it
             (*arp_table_len)++;
@@ -111,7 +111,7 @@ void send_arp_request(struct route_table_entry *best_route, int interface,
     arp_header->proto_type = htons(proto_type);
 
     get_interface_mac(interface, arp_header->shwa);
-    arp_header->sprotoa = inet_addr(get_interface_ip(interface));
+    arp_header->sprotoa = inet_addr(get_interface_ipv4(interface));
     memcpy(arp_header->thwa, BROADCAST_MAC, 6);
     arp_header->tprotoa = best_route->next_hop;
 

@@ -18,7 +18,7 @@ void handle_ipv4(struct ether_hdr* ether_header, struct ip_hdr *ip_header,
 	}
 	
 	// STEP 2: check if this router is the destination
-	uint32_t interface_ip = inet_addr(get_interface_ip(interface));
+	uint32_t interface_ip = inet_addr(get_interface_ipv4(interface));
 	if (interface_ip == ip_header->dest_addr) {
 		// this project's router will only respond to ICMP messages
 		if (ip_header->proto != ICMP_PROTOCOL_ID)

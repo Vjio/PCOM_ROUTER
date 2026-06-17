@@ -16,19 +16,19 @@ struct icmp_hdr
   uint8_t mtype;                /* message type */
   uint8_t mcode;                /* type sub-code */
   uint16_t check;               /* checksum */
-  union
-  {
-	struct
-	{
+  union {
+	// for pings
+	struct {
 	  uint16_t        id;
 	  uint16_t        seq;
-	} echo_t;                        /* echo datagram.  Vom folosi doar acest câmp din union*/
-	uint32_t        gateway_addr;        /* Gateway address. Nu este relevant pentru tema */
-	struct
-	{
+	} echo_t;                        /* echo datagram*/
+	// for redirects
+	uint32_t        gateway_addr;
+	// for fragmentation needed errors
+	struct {
 	  uint16_t        __unused;
 	  uint16_t        mtu;
-	} frag_t;                        /* Nu este relevant pentru tema */
+	} frag_t;
   } un_t;
 };
 

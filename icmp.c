@@ -1,6 +1,6 @@
 #include "icmp.h"
 
-// the router will need to handle icmp header in only 3 instances
+// the router currently needs to handle icmp in only 3 instances:
 // replying to an echo
 // TTL expiring
 // not finding a route to the destination
@@ -21,6 +21,10 @@ void handle_icmp(struct ether_hdr* ether_header, struct ip_hdr *ip_header, struc
 
         // update packet len
         len = sizeof(struct ether_hdr) + 2 * sizeof(struct ip_hdr) + sizeof(struct icmp_hdr) + 8;
+
+        // handle extra union fields of ICMP
+        if (mtype == ICMP_DEST_UNREACHABLE)
+            icmp_header->un_t.gateway_addr = 0;
     }
     // for the echo reply, we keep the payload intact
 
@@ -33,7 +37,7 @@ void handle_icmp(struct ether_hdr* ether_header, struct ip_hdr *ip_header, struc
     ip_header->dest_addr = ip_header->source_addr;
 
     // change IP S_ADDR to be the interface's ADDR
-    ip_header->source_addr = inet_addr(get_interface_ip(interface));
+    ip_header->source_addr = inet_addr(get_interface_ipv4(interface));
 
     // reset TTL
     ip_header->ttl = 64;

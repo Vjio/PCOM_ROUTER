@@ -2,8 +2,9 @@
 
 #include <stdint.h>
 
-#define ETHR_TYPE_IPV4  0x800
-#define ETHR_TYPE_ARP   0x806
+#define ETHR_TYPE_IPV4  0x0800
+#define ETHR_TYPE_ARP   0x0806
+#define ETHER_TYPE_IPV6 0x86DD
 
 /* Ethernet frame header*/
 struct ether_hdr {

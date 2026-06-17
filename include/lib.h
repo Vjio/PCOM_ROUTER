@@ -48,7 +48,11 @@ struct arp_table_entry {
     uint8_t mac[6];
 };
 
-char *get_interface_ip(int interface);
+// gets the ipv4 address of an interface
+char *get_interface_ipv4(int interface);
+
+// returns a static buffer with the IPv6 address string, or NULL if not found
+const char *get_interface_ipv6(int interface);
 
 /**
  * @brief Get the interface mac object. The function writes
